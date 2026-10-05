@@ -47,53 +47,28 @@
 
 ## Tool Inventory
 
-<!-- Four lines per tool. This is worth 2 points and it's the single most
-     common place students lose them.
+### search_listings(description, size=None, max_price=None)
+- **What it does:** Searches the listings data for items matching a description, with optional size and price filters, returning the best keyword matches first.
+- **Inputs:** `description` (str) — keywords describing the desired item. `size` (str | None) — a size string to filter by; matched by splitting both the target and the listing's size field on non-alphanumeric characters into uppercase tokens and requiring an exact token match (so "M" matches "S/M" but not "US 9" — this avoids false substring hits like `"s" in "us 9"`). `max_price` (float | None) — inclusive price ceiling.
+- **Returns:** `list[dict]` of matching listing dicts (fields: id, title, description, category, style_tags, size, condition, price, colors, brand, platform), sorted by keyword-overlap score with `description`, highest first, capped at `config.SEARCH_RESULT_LIMIT`.
+- **Empty case:** Returns an empty list — never `None`, never raises.
 
-     "Returns a list" earns NOTHING. The description has to say what is IN
-     the list.
+### suggest_outfit(new_item, wardrobe)
+- **What it does:** Given a thrifted item and the user's wardrobe, asks the model for one or two outfit combinations using pieces the user already owns.
+- **Inputs:** `new_item` (dict) — a listing dict. `wardrobe` (dict) — a dict with an `items` key holding a list of wardrobe item dicts; the list may be empty.
+- **Returns:** `str` — a non-empty string with outfit suggestions naming specific wardrobe pieces.
+- **Empty case:** When `wardrobe["items"]` is empty, returns general styling advice for the item as a string — never raises, never returns `""`.
 
-     The empty case isn't optional either — it's the thing your loop branches
-     on, and if you don't decide it here you'll discover it as a crash in
-     Milestone 5. -->
-
-### `search_listings`
-
-- **What it does:**
-- **Inputs:** <!-- name and type each: `max_price` (float), not "a price" -->
-- **Returns:**
-- **When it has nothing:**
-
-### `suggest_outfit`
-
-- **What it does:**
-- **Inputs:**
-- **Returns:**
-- **When it has nothing:**
-
-### `create_fit_card`
-
-- **What it does:**
-- **Inputs:**
-- **Returns:**
-- **When it has nothing:**
-
----
+### create_fit_card(outfit, new_item)
+- **What it does:** Writes a short, two-to-four sentence caption someone would actually post about the find, mentioning the item, its price, and its platform once each, and specific about the vibe.
+- **Inputs:** `outfit` (str) — the suggestion string returned by `suggest_outfit`. `new_item` (dict) — the listing dict for the item.
+- **Returns:** `str` — a two-to-four sentence caption. Output varies run to run (model-generated, temperature > 0, caching disabled during real testing).
+- **Empty case:** If `outfit` is empty or whitespace-only, returns a descriptive fallback message rather than raising.
 
 ## Planning Loop
 
-<!-- Your branch rule, stated as a rule — the condition AND both paths — plus
-     the file and function that holds it.
+**Branch rule:** If `search_listings` returns an empty list, `agent.py::run_agent` puts a message in `session["error"]` naming what the user could change (e.g. "No matches — try raising your price ceiling or using a broader description"), and returns the session immediately without calling `suggest_outfit` or `create_fit_card`. Otherwise, the first search result is stored as `session["selected_item"]`, and the loop proceeds to `suggest_outfit` then `create_fit_card`, storing each result back into the session before the next call reads it out.
 
-     Like this:
-       "If search_listings returns an empty list, put a message in the session
-        and stop. Otherwise take the first result and go to suggest_outfit."
-        — agent.py::run_agent
-
-     The grader checks your code against what you claim here, so the file and
-     function have to be real. -->
-
-**Branch rule:**
 
 **Where it lives:** `agent.py::run_agent`
 
