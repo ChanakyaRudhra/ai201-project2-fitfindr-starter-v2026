@@ -72,9 +72,9 @@
 
 **Where it lives:** `agent.py::run_agent`
 
-**How the query is parsed:** <!-- regex, string splitting, or asking the model — say which -->
+**How the query is parsed:** Regex, in `agent.py::parse_query`. Extracts a `$amount` as `max_price` (first dollar figure found), an explicit "size X" phrase or a common standalone size token (XXS/XS/S/M/L/XL/XXL/S-M/M-L) as `size`, and treats the remaining text — with the price phrase, size phrase, and the word "under" stripped — as the search `description`.
 
-**What moves through the session:** <!-- which fields, in what order -->
+**What moves through the session:** `query` → `parsed` (description/size/max_price) → `search_results` → `selected_item` (first result) → `outfit_suggestion` → `fit_card`. The branch checks `search_results`: if empty, `session["error"]` is set to a message naming what to change, and the function returns immediately without calling `suggest_outfit` or `create_fit_card`.
 
 ---
 
