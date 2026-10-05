@@ -39,9 +39,7 @@
 
 ## What This Does
 
-<!-- Three or four sentences: what a user asks for, and what they get back. -->
-
-
+FitFindr is an agent for thrifting: you describe what you want (e.g. "a vintage graphic tee under $30, size M") and it searches real listings, works out what the item would pair with from your existing wardrobe, and writes a short caption you'd actually post about the find. Unlike a fixed pipeline, it decides what to do next based on what each step returns — if nothing in the listings matches, it stops and tells you what to change instead of continuing with nothing to work from.
 
 ---
 
@@ -121,24 +119,17 @@ No two share an identical opening sentence; all 3 mention the $38 price and the 
 
 ## How I Used AI
 
-<!-- Two specific moments. What you asked, what came back, what you changed.
-
-     "I used Claude to help me code" is not enough.
-
-     "I gave Claude my search_listings spec. It returned None on no match
-     instead of an empty list, so I changed it" is the level we want. -->
-
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* An implementation of `suggest_outfit` that builds a prompt from the new item and the wardrobe.
+- *What came back:* A version that used backslash-escaped quotes inside f-string `{}` expressions (e.g. `f"{new_item[\\'title\\']}"`), which raised `SyntaxError: unexpected character after line continuation character` the moment I ran it.
+- *What I changed:* Diagnosed that Python disallows backslashes inside f-string expression braces (pre-3.12), so I rewrote it to pull each dict value into a plain variable first (`title = new_item['title']`) and only referenced those plain variables inside the f-strings.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Help deciding how `search_listings` should match on size, given the docstring's warning that a naive substring check is wrong (`"s" in "us 9"` is `True`).
+- *What came back:* The suggestion to split both the target size and the listing's size field into uppercase alphanumeric tokens and require an exact token-set intersection, rather than a substring test.
+- *What I changed:* Implemented it as written — `"M"` now correctly matches `"S/M"` (shared token `M`) but does not match `"US 9"` (no shared token), which was the exact failure case the docstring called out.
 
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
