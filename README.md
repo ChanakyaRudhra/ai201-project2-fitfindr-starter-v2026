@@ -80,34 +80,42 @@
 
 ## Sample Run
 
-<!-- Two things go here.
-
-     1. One FULL query and its output, pasted as text.
-     2. Your three per-tool terminal tests — the command and what it printed. -->
-
-**One full query**
-
-```
-$ python app.py ask '...'
-
-```
+**One full query** — to be added once the loop is wired (Milestone 5).
 
 **The three tools, tested one at a time**
 
 ```
 $ python -c "from tools import search_listings; print(search_listings('graphic tee', max_price=30))"
-
+[{'id': 'lst_002', 'title': 'Y2K Baby Tee — Butterfly Print', ...}, {'id': 'lst_006', 'title': 'Graphic Tee — 2003 Tour Bootleg Style', ...}, {'id': 'lst_017', 'title': 'Mesh Long-Sleeve Top — Black', ...}, {'id': 'lst_033', 'title': 'Vintage Band Tee — Faded Grey', ...}, {'id': 'lst_011', 'title': 'Low-Rise Cargo Pants — Khaki', ...}, {'id': 'lst_015', 'title': 'Vintage Graphic Hoodie — Faded Black', ...}]
 ```
 
 ```
-$ python -c "from tools import suggest_outfit; ..."
-
+$ python -c "from tools import search_listings; print(search_listings('designer ballgown', size='XXS', max_price=5))"
+[]
 ```
 
 ```
-$ python -c "from tools import create_fit_card; ..."
+$ python -c "from tools import suggest_outfit; from utils.data_loader import get_example_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_example_wardrobe()))"
+**Buy them.** Vintage Levi's 501s are a closet staple... [2 outfits naming real wardrobe pieces: White ribbed tank top, Oversized grey crewneck sweatshirt, Black cropped zip hoodie, Black combat boots, Brown leather belt]
+```
 
 ```
+$ python -c "from tools import suggest_outfit; from utils.data_loader import get_empty_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_empty_wardrobe()))"
+You can't go wrong with these two effortless routes: 1. The Classic Casual Look... 2. The Streetwear Vibe... [general advice, no wardrobe items referenced — confirms empty-wardrobe path works]
+```
+
+```
+$ python -c "from tools import create_fit_card; from utils.data_loader import load_listings; print(create_fit_card('jeans and white sneakers', load_listings()[0]))"
+Nothing beats the effortless 90s streetwear vibe of a truly broken-in pair of vintage Levi's 501 jeans. I just scored these medium wash blues on Depop for $38 and they fit like an absolute dream. Throw them on with some fresh white sneakers and you've got the ultimate laid-back uniform.
+```
+
+**Variability check (cache disabled, criterion 4):** 3 runs on the same item, same outfit input, `AI201_CACHE=0`:
+1. "Found the holy grail of denim today—these vintage Levi's 501 jeans... Just dropped them on my depop for $38..."
+2. "Nothing beats the fit of broken-in vintage Levi's 501s. Snagged this medium wash pair for just $38 on depop..."
+3. "Nothing beats the wash on these vintage Levi's 501 jeans... Got them for $38... Up now on my depop!"
+
+No two share an identical opening sentence; all 3 mention the $38 price and the Depop platform.
+
 
 ---
 
