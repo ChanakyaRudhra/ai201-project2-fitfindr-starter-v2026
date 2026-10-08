@@ -67,24 +67,33 @@ from tools import search_listings as _search_listings_impl  # noqa: F401 — you
 mcp = FastMCP("fitfindr", log_level="WARNING")
 
 
-# ── TODO: uncomment and fill this in ──────────────────────────────────────────
-#
-# @mcp.tool()
-# def search_listings(
-#     description: str,
-#     size: str | None = None,
-#     max_price: float | None = None,
-# ) -> list[dict]:
-#     """
-#     <-- YOUR DESCRIPTION GOES HERE.
-#
-#         One or two sentences. What does this tool do, what does it need, and
-#         what does it give back when it finds nothing? Written for a reader
-#         who cannot see the code.
-#     """
-#     return _search_listings_impl(description, size, max_price)
-#
-# ──────────────────────────────────────────────────────────────────────────────
+@mcp.tool()
+def search_listings(
+    description: str,
+    size: str | None = None,
+    max_price: float | None = None,
+) -> list[dict]:
+    """
+    Search secondhand clothing listings by keyword and return the best
+    matches, best match first.
+
+    Args:
+        description: keywords describing the desired item (e.g.
+            "vintage graphic tee"). Matched against the listing's title,
+            description, and style tags.
+        size: a clothing size to filter by (e.g. "M", "S/M", "W30"), or
+            omit to skip size filtering. Matched by exact size-token
+            overlap, not substring, so "M" matches "S/M" but not "US 9".
+        max_price: the highest price in US dollars the buyer will pay,
+            inclusive of that amount. Omit to skip price filtering.
+
+    Returns:
+        A list of listing dicts (fields: id, title, description, category,
+        style_tags, size, condition, price, colors, brand, platform),
+        sorted by keyword relevance, highest first. Returns an empty list
+        (not an error) when nothing matches.
+    """
+    return _search_listings_impl(description, size, max_price)
 #
 # Two notes on the block above.
 #
