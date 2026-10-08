@@ -210,22 +210,43 @@ that produced it:
      the same length, your branch isn't working — and this is the fastest way
      anyone will ever find that out. -->
 
-**Happy path**
-i
-```
 
+
+**Happy path**
+
+```
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Y2K Baby Tee - Butterfly Print, Graphic Tee - 2003 Tour Bootleg Style, Vintage Band Tee - Faded Grey ... +7 more
+[3] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: **Outfit 1: Y2K Streetwear** *   **Top:** Y2K Butterfly Baby Tee *   **Bottoms:** Baggy straight-leg jeans (da...
+[4] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: Found the ultimate early 2000s butterfly baby tee for just $18 over on Depop! I'm totally obsessed with the pi...
 ```
 
 **Empty search**
 
 ```
-
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+[3] branch
+      ->    empty search results, stopping
 ```
 
 **On the MCP move:** `search_listings` was moved onto MCP because it doesn't call the model, making it the simplest seam to move first. `agent.py::run_agent` no longer imports `search_listings` directly; it now calls `call_tool("search_listings", {...})` from `mcp_client.py`, which starts `mcp_server.py` as a subprocess over stdio, sends the request, and returns the unwrapped result. The tool itself (`tools.py::search_listings`) is unchanged — `mcp_server.py` registers a thin wrapper around it with a description and typed inputs written for a reader who can't see the code. Running `python app.py ask 'vintage graphic tee under $30'` before and after the move returned the identical item, outfit, and fit card — the call now goes through a subprocess and the MCP protocol instead of a direct Python call, but the return value's shape and content were unaffected.
 
 
 ---
+
 
 ## The Improvement
 
