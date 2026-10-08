@@ -29,24 +29,31 @@ SCENARIOS = [
         "criterion": 2,
     },
     {
-        # A user with nothing saved. One of unit 4's three failure modes.
-        "name": "empty wardrobe",
+        # A user with nothing saved. Also directly tests criterion 5
+        # (empty wardrobe gets real advice, not a placeholder).
+        "name": "empty wardrobe gets real advice",
         "query": "denim jacket under $50",
         "wardrobe": "empty",
-        "criterion": None,
+        "criterion": 5,
     },
-    # TODO: add what your criteria 3, 4 and 5 need.
-    #
-    # Set "criterion" to the number in criteria.md that the scenario tests.
-    # "criterion": None means a diagnostic run — useful to have, but it isn't
-    # one of your five, and run_eval.py marks it as such in the table.
-    #
-    # For a state criterion, any normal query works — what you're checking is
-    # what ends up in the session, not what the user typed.
-    #
-    # For a fit-card criterion, you probably want the SAME query listed more
-    # than once, or several different items, depending on what your criterion
-    # actually says.
+    {
+        # Criterion 3 - state. Any matching query works: what we're checking
+        # is whether selected_item's identity shows up in the fit card text,
+        # not what the user typed.
+        "name": "selected item matches fit card",
+        "query": "silk slip dress in midi length under $40",
+        "wardrobe": "example",
+        "criterion": 3,
+    },
+    {
+        # Criterion 4 - fit card variability. Same query every try, so the
+        # 5 tries are 5 real generations on the same item: check no two
+        # share an opening sentence, and all 5 mention the price.
+        "name": "fit card varies but mentions price",
+        "query": "90s track jacket in size M",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
 ]
 
 WARDROBES = ("example", "empty")
