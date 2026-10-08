@@ -168,35 +168,19 @@ that produced it:
 
 ## Verdicts and Diagnoses
 
-<!-- MET or MISSED per criterion against LAST UNIT's target, plus a sentence on
-     how you decided.
-
-     Then, for every miss: which of the four places it happened — a tool, the
-     loop's branch, the session, or the model's output — AND the mechanism.
-
-     Not a diagnosis:  "The fit card was bad."
-     A diagnosis:      "The fit card criterion missed on 2 of 5 items. Both had
-                        an empty brand field. My prompt puts the brand in the
-                        first sentence, so the card opened with a blank and read
-                        like a fragment. The tool worked; the prompt assumed a
-                        field that isn't always there."
-
-     Look for a pattern. Three misses on the same tool is one problem, not
-     three. -->
-
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Full three-tool run returns a fit card | 4 of 5 | MET (5/5) | All 5 tries completed with a non-empty fit card. |
+| 2 | Impossible query stops before tool 2 | 5 of 5 | MET (5/5) | All 5 tries stopped early with zero model calls and a message naming what to change. |
+| 3 | Selected item matches fit card text | 5 of 5 | MET (5/5) | The selected item's name ("90s floral silk slip dress", "midi length") appeared in all 5 fit cards. |
+| 4 | Fit card varies, mentions price | no two opening sentences identical, all mention price | MET (5/5) | All 5 opening sentences were textually distinct, and all 5 mentioned the $45 price somewhere in the card. |
+| 5 | Empty wardrobe gets real advice | 5 of 5 | MET (5/5) | All 5 tries returned substantive styling advice with no crash and no empty string. |
 
 **Diagnoses**
 
+No criterion was missed. But five 5/5s in a row is a reason to look harder at the targets, not a reason to relax.
 
-
----
+**Criterion 1 is the one I'd tighten, and it's closer to broken than merely safe.** It was set at 4 of 5 specifically because plain keyword-overlap search can miss a paraphrase a human would consider a match. But `run_eval.py` maps each criterion to exactly one scenario, repeated 5 times - not 5 different query phrasings - and `search_listings` is fully deterministic. For a fixed query, retrieval either matches on every try or none; there is no mechanism in this test structure by which a single scenario could produce a genuine 4-of-5 on the retrieval half of this criterion. The only thing that could actually vary across the 5 tries is whether the two model-calling tools behaved consistently, which is a different question entirely from "does search tolerate varied phrasing." My 5/5 confirms the pipeline didn't crash on a known-good query - it does not confirm what the criterion's own reasoning claims it was testing. See the revision added under criterion 1 in `criteria.md`.
 
 ## Loop Trace
 

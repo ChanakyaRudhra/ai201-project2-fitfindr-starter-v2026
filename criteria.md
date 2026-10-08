@@ -28,6 +28,10 @@ tool calls and returns a fit card - in at least 4 of 5 tries.
 
 My search is a plain keyword-overlap match, not semantic search - some phrasings in a query won't share any keywords with a listing's title, description, or style_tags even when a human would consider it a match. I'm leaving room for 1 miss from query phrasing the keyword scorer can't bridge.
 
+> **Revised in unit 4:** Given a query that matches at least one listing, the agent completes all three tool calls and returns a fit card, in 5 of 5 tries on a known-good query. The retrieval-robustness-to-phrasing claim is dropped from this criterion.
+>
+> **Why revised:** `run_eval.py` maps each criterion to one scenario, repeated 5 times with the SAME query - not 5 different phrasings. `search_listings` is fully deterministic, so for a fixed query, retrieval either matches on every try or none; there is no way this test structure could produce a genuine 4-of-5 on the retrieval-robustness claim the original target was reasoning about. My 5/5 result confirms the pipeline didn't crash on a known-good query, not that search tolerates varied phrasing - that would need 5 distinct queries mapped to one row, which the current scenario-to-row structure doesn't support. The number wasn't wrong for what I originally meant; what I could actually measure with this harness is a narrower claim, so the criterion now says what was really tested.
+
 ---
 
 ## 2. An impossible query stops before the second tool
