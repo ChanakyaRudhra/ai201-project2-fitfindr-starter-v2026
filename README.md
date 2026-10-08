@@ -140,29 +140,40 @@ No two share an identical opening sentence; all 3 mention the $38 price and the 
 
 ## Run Log — Before
 
-<!-- Five criteria, five tries each, in this exact format.
-
-     Five, because your criteria are written out of five. Mark each try PASS
-     or FAIL, count the passes, and read that count against your target — a
-     row targeting 4 of 5 with three PASS cells is MISSED (3/5).
-
-     `python run_eval.py --label before` runs everything and writes the table
-     into results/. Paste it here and fill in the verdicts. -->
+Produced by `run_eval.py::main`. Loop: `agent.py::run_agent`, tools: `tools.py`. 5 tries per scenario, caching off. Full file: `results/run_2026-10-08_0150_before.md`.
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. Full three-tool run returns a fit card | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 2. Impossible query stops before tool 2 | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item matches fit card text | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Fit card varies, mentions price | no two opening sentences identical, all mention price | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 5. Empty wardrobe gets real advice | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
-**Real output from one try**, pasted as text, naming the file and function
-that produced it:
-
-```
+**Real output from one try**, from `results/run_2026-10-08_0150_before.md`, scenario "matching query completes", produced by `agent.py::run_agent` (try 1):
 
 ```
+Query: vintage graphic tee under $30
+
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- search_results: 10
+
+Fit card:
+
+Found the ultimate Y2K butterfly baby tee thrifting the other day and I am obsessed with the pink and purple print. Just listed it on Depop for $18 if anyone wants to snag it before me!
+```
+
+**Real output for criterion 4** (fit card variability), scenario "fit card varies but mentions price", item: 90s Track Jacket — Navy/White Stripe ($45.0, poshmark):
+
+```
+Try 1: Still obsessed with this vintage navy and white 90s track jacket I scored on Poshmark for just $45. ...
+Try 2: Found this ultimate 90s navy and white track jacket thrifting and I am obsessed. ... grabbed it for just $45. ...
+Try 3: Obsessed with this 90s navy and white track jacket I just scored on Poshmark for $45! ...
+Try 4: Nothing beats finding the ultimate 90s track jacket while thrifting. Grab this navy and white stripe piece on my Poshmark for just $45. ...
+Try 5: Obsessed with this 90s track jacket I just scored on Poshmark for $45! ...
+```
+
+All 5 opening sentences are textually distinct; all 5 mention the $45 price.
 
 ---
 
