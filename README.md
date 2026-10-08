@@ -252,9 +252,11 @@ No criterion was missed. But five 5/5s in a row is a reason to look harder at th
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped where
-     you did. "I ran out of time" is fine if it's true. Pretending nothing is
-     left is not. -->
+No criterion is currently missed, so there's nothing to fix in the sense of a failing number. What's still broken is the test suite's coverage, not the agent: none of my 5 criteria measure retrieval *quality* (whether the selected item is genuinely the best match), only retrieval *mechanics* (completion, branching, state-passing). The Milestone 5 improvement proved this gap directly - a real, verifiable ranking change that moved zero numbers on my run log.
+
+If I kept going, I'd add a sixth criterion (or revise criterion 1 again) something like: "For 5 queries whose single best match is identifiable by inspection, the agent's selected_item is that best match, in at least 4 of 5 tries" - and build scenarios for it using items with a clear, unambiguous best match versus clear distractors, so the test could actually catch a regression in ranking quality the way it just caught (by luck of me noticing, not by a failing test) the title-vs-description weighting issue.
+
+I stopped here because the unit scopes one measured improvement, and building a new criterion plus new scenarios for it would be a second, separate piece of work beyond what this unit asks for - better to name the gap honestly than to rush a sixth criterion without giving it the same "could a stranger test this" scrutiny as the first five.
 
 
 
