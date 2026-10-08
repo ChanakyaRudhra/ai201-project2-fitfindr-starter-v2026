@@ -96,17 +96,28 @@ def search_listings(
                 continue
         candidates.append(listing)
 
-    desc_words = set(re.findall(r"[a-z0-9]+", description.lower()))
+    query_words = set(re.findall(r"[a-z0-9]+", description.lower()))
+
+    # Weighted scoring: a word match in the title or style_tags is a much
+    # stronger signal of relevance than a word match buried in the listing's
+    # free-text description. Scoring all three fields equally let incidental
+    # description overlap (e.g. "layering under a graphic tee" in a mesh
+    # top's description) outrank genuinely tagged matches.
+    TITLE_WEIGHT = 3
+    STYLE_WEIGHT = 2
+    DESC_WEIGHT = 1
 
     scored = []
     for listing in candidates:
-        haystack = " ".join([
-            listing["title"],
-            listing["description"],
-            " ".join(listing["style_tags"]),
-        ]).lower()
-        haystack_words = set(re.findall(r"[a-z0-9]+", haystack))
-        score = len(desc_words & haystack_words)
+        title_words = set(re.findall(r"[a-z0-9]+", listing["title"].lower()))
+        style_words = set(re.findall(r"[a-z0-9]+", " ".join(listing["style_tags"]).lower()))
+        desc_words_listing = set(re.findall(r"[a-z0-9]+", listing["description"].lower()))
+
+        score = (
+            TITLE_WEIGHT * len(query_words & title_words)
+            + STYLE_WEIGHT * len(query_words & style_words)
+            + DESC_WEIGHT * len(query_words & desc_words_listing)
+        )
         if score > 0:
             scored.append((score, listing))
 

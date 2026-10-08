@@ -234,30 +234,23 @@ No criterion was missed. But five 5/5s in a row is a reason to look harder at th
 
 ## The Improvement
 
-<!-- What you changed, why your diagnosis pointed at it, and the after-run in
-     the same table format. One change, measured properly.
+## The Improvement
 
-     `python run_eval.py --label after` -->
+**What I changed:** Reweighted `search_listings`'s scoring in `tools.py` — matches in a listing's title or style_tags now score 3x and 2x higher respectively than matches in the listing's free-text description (previously all three fields were scored equally via raw combined keyword overlap).
 
-**What I changed:**
-
-**Which failure it was meant to fix:**
+**Which failure it was meant to fix:** My Milestone 4 diagnosis found that criterion 1's "4 of 5" target was reasoning about retrieval tolerating paraphrasing, but equal-weight scoring let loosely-related items (e.g. cargo pants, a mesh top) outrank genuinely tagged matches purely from incidental description text ("layering under a graphic tee"). This directly targets that mechanism: before the fix, `search_listings('graphic tee', max_price=30)` ranked "Y2K Baby Tee" above "Graphic Tee — 2003 Tour Bootleg Style" (which has the exact query phrase in its title); after, the exact-title match ranks first.
 
 ### Run Log — After
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. Full three-tool run returns a fit card | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 2. Impossible query stops before tool 2 | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item matches fit card text | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Fit card varies, mentions price | — | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 5. Empty wardrobe gets real advice | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
-**Did it help, and how do I know:**
-
-<!-- If it made things worse, say that. Honestly reported, that earns full
-     credit and is more interesting than one that worked. -->
-
+**Did it help, and how do I know:** Yes, but not in a way any of my 5 criteria could detect — which is itself the finding. The reweighting changed *which item* search returns first (the exact-title match now outranks an item that only matched on incidental description words), confirmed directly by comparing `search_listings('graphic tee', max_price=30)` output before and after. But all 5 numeric criteria scored identically (5/5 on both runs), because none of them actually measure retrieval *quality* — they measure completion, branching, state-passing, output variability, and the empty-wardrobe path, none of which depend on *which* item gets selected as long as *an* item is selected. So this improvement is real and verifiable by direct inspection, but invisible to my test suite as written. That's a second, smaller version of the same diagnosis from Milestone 4: my criteria test mechanics, not quality.
 
 
 ---
