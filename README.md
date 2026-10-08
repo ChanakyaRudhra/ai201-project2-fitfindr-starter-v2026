@@ -222,19 +222,7 @@ i
 
 ```
 
-**On the MCP move:** <!-- what changed in your code, and whether anything
-behaved differently afterwards. If the rewire didn't work, say exactly where it
-broke — the error text and the last thing that worked. That earns the point in
-full. -->
-
-
-## MCP
-
-**Tool moved:** `search_listings` — chosen because it doesn't call the model, making it the simplest seam to move first.
-
-**What changed:** `agent.py::run_agent` no longer imports `search_listings` directly; it now calls `call_tool("search_listings", {...})` from `mcp_client.py`, which starts `mcp_server.py` as a subprocess over stdio, sends the request, and returns the unwrapped result. The tool itself (`tools.py::search_listings`) is unchanged — `mcp_server.py` registers a thin wrapper around it with a description and typed inputs written for a reader who can't see the code.
-
-**Did the result change?** No — running `python app.py ask 'vintage graphic tee under $30'` before and after the move returned the identical item, outfit, and fit card. The call now goes through a subprocess and the MCP protocol instead of a direct Python call, but the return value's shape and content were unaffected.
+**On the MCP move:** `search_listings` was moved onto MCP because it doesn't call the model, making it the simplest seam to move first. `agent.py::run_agent` no longer imports `search_listings` directly; it now calls `call_tool("search_listings", {...})` from `mcp_client.py`, which starts `mcp_server.py` as a subprocess over stdio, sends the request, and returns the unwrapped result. The tool itself (`tools.py::search_listings`) is unchanged — `mcp_server.py` registers a thin wrapper around it with a description and typed inputs written for a reader who can't see the code. Running `python app.py ask 'vintage graphic tee under $30'` before and after the move returned the identical item, outfit, and fit card — the call now goes through a subprocess and the MCP protocol instead of a direct Python call, but the return value's shape and content were unaffected.
 
 
 ---
